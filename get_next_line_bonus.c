@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sdemiroz <sdemiroz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/15 17:23:42 by sdemiroz          #+#    #+#             */
-/*   Updated: 2024/10/21 15:57:26 by sdemiroz         ###   ########.fr       */
+/*   Created: 2024/10/21 15:00:34 by sdemiroz          #+#    #+#             */
+/*   Updated: 2024/10/21 15:11:54 by sdemiroz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*ft_join(char *temp, char *buffer)
 {
@@ -41,6 +41,7 @@ static char	*ft_get_rest(char *buffer)
 		return (NULL);
 	while (buffer[++x])
 		rest[y++] = buffer[x];
+	rest[y] = '\0';
 	free(buffer);
 	return (rest);
 }
@@ -101,39 +102,15 @@ static char	*ft_get_buffer(int fd, char *buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[OPEN_MAX];
 	char		*res;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = ft_get_buffer(fd, buffer);
-	if (!buffer)
+	buffer[fd] = ft_get_buffer(fd, buffer[fd]);
+	if (!buffer[fd])
 		return (NULL);
-	res = ft_get_res(buffer);
-	buffer = ft_get_rest(buffer);
+	res = ft_get_res(buffer[fd]);
+	buffer[fd] = ft_get_rest(buffer[fd]);
 	return (res);
 }
-// int main(void)
-// {
-// 	int fd;
-// 	char *line;
-
-// 	fd = open("testfile.txt", O_RDONLY);
-
-// 	line = get_next_line(fd);
-// 	printf("first call: \n");
-// 	printf("%s", line);
-// 	free(line);
-// 	line = get_next_line(fd);
-// 	printf("next call: \n");
-// 	printf("%s", line);
-// 	free(line);
-// 	printf("call in loop:");
-// 	while ((line = get_next_line(fd)) != NULL)
-// 		{
-// 		printf("%s", line);
-// 		free(line);
-// 		}
-// 	close(fd);
-// 	return (0);
-// }
